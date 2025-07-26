@@ -1,0 +1,14 @@
+# Env & cache
+.venv/
+__pycache__/
+*.py[cod]
+
+# Editors
+.vscode/
+*.swp
+*.swo
+
+# Build & temp
+*.log
+*.tmp
+*.bak
