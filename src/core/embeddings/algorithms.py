@@ -28,14 +28,10 @@ class HFDenseTextEmbeddingsGenerator(TextEmbeddingsGenerator):
 
         self.model = DenseTextEmbedding(model_name=self.model_name)
 
-    def get_embedding(self, text: str, return_tensor: bool) -> list | np.ndarray:
+    def get_embedding(self, text: str, return_tensor: bool) -> TextEmbedding:
         vector = list(self.model.embed(text))[0] 
 
         if return_tensor:
             return TextEmbedding(text, vector)
         else: 
             return TextEmbedding(text, vector.tolist())
-
-
-    
-print(HFDenseTextEmbeddingsGenerator(model_name= "intfloat/multilingual-e5-small", dim = 384).get_embedding('coooo', return_tensor=False))
