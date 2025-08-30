@@ -4,8 +4,9 @@ from transformers import AutoTokenizer
 
 class ChonkieEmbeddingWrapper(BaseEmbeddings):
     def __init__(self, embedder: HFDenseTextEmbeddingsGenerator):
+        super().__init__()
         self.embedder = embedder
-
+        
     @property
     def dimension(self) -> int:
         return self.embedder.dim
@@ -19,3 +20,4 @@ class ChonkieEmbeddingWrapper(BaseEmbeddings):
 
     def get_tokenizer_or_token_counter(self):
         return AutoTokenizer.from_pretrained(self.embedder.model_name)
+
