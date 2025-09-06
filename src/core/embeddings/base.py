@@ -1,10 +1,9 @@
-import numpy as np
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from src.core.embeddings.models import TextEmbedding
 
 @dataclass
-class TextEmbeddingsGenerator(ABC):
+class BaseTextEmbeddingsGenerator(ABC):
     """
     Abstract base class for embedding generation.
     """
@@ -12,13 +11,13 @@ class TextEmbeddingsGenerator(ABC):
     model_name: str 
 
     @abstractmethod
-    def get_embedding(text: str, return_tensor: bool) -> TextEmbedding:
+    def get_embedding(text: str, return_numpy: bool) -> TextEmbedding:
         """
         Method to get a text embedding. 
 
         Args:
             text (str): the text to embed.
-            return_tensor (bool): whether to return an np.array or a standard list.
+            return_numpy (bool): whether to return an np.array or a standard list.
         
         Returns:
             TextEmbedding: the generated embedding.
