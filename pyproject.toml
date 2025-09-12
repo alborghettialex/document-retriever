@@ -12,6 +12,7 @@ dependencies = [
     "llama-index>=0.12.52",
     "llama-index-vector-stores-faiss>=0.4.0",
     "pymupdf>=1.26.3",
+    "qdrant-client>=1.15.1",
     "safetensors>=0.5.3",
     "transformers>=4.54.0",
 ]
