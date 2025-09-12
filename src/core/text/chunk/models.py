@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from src.core.embeddings.base import BaseTextEmbeddingsGenerator
 from enum import Enum 
 
 @dataclass
@@ -17,9 +16,3 @@ class ChunkingMode(Enum):
     TOKEN = "token"
     SENTENCE = "sentence"
     SEMANTIC = "semantic"
-
-@dataclass
-class ChunkerParams:
-    chunk_size: int = None
-    chunk_overlap: int = None
-    embedder: BaseTextEmbeddingsGenerator = None
