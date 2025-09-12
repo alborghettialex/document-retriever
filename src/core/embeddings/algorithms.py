@@ -4,7 +4,10 @@ import numpy as np
 from fastembed import TextEmbedding as DenseTextEmbedding
 from fastembed.common.model_description import PoolingType, ModelSource
 from src.core.embeddings.models import TextEmbedding
+from src.core.embeddings.registry import register_embedder
+from src.core.text.chunk.models import TextChunk
 
+@register_embedder("hf-dense")
 @dataclass
 class HFDenseTextEmbeddingsGenerator(BaseTextEmbeddingsGenerator):
     """
@@ -28,10 +31,11 @@ class HFDenseTextEmbeddingsGenerator(BaseTextEmbeddingsGenerator):
 
         self.model = DenseTextEmbedding(model_name=self.model_name)
 
-    def get_embedding(self, text: str, return_numpy: bool) -> TextEmbedding:
-        vector = list(self.model.embed(text))[0] 
+    def get_embeddings(self, chunks: list[TextChunk], return_numpy: bool, batch_size: int) -> list[TextEmbedding]:
+        texts = [chunk.text for chunk in chunks]
+        vectors = list(self.model.embed(texts, batch_size=batch_size))
 
         if return_numpy:
-            return TextEmbedding(text, vector)
+            return [TextEmbedding(text, vector) for text, vector in zip(texts, vectors)]
         else: 
-            return TextEmbedding(text, vector.tolist())
+            return [TextEmbedding(text, vector.tolist()) for text, vector in zip(texts, vectors)]
