@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from src.core.text.chunk.models import TextChunk, ChunkingMode, ChunkerParams
+from src.core.text.chunk.models import TextChunk, ChunkingMode
+from core.text.chunk.config_schema import ChunkerParams
 from typing import ClassVar
 
 @dataclass
@@ -9,9 +10,9 @@ class BaseTextChunker(ABC):
     Abstract base class for text chunking
     """
 
-    mode: ChunkingMode
+    mode: str 
     supported_modes: ClassVar[set[ChunkingMode]] = set()
-    params: ChunkerParams
+    params: dict
 
     required_params_map: ClassVar[dict[ChunkingMode, set[str]]] = {
             ChunkingMode.TOKEN: {"chunk_size", "chunk_overlap"},
@@ -20,7 +21,11 @@ class BaseTextChunker(ABC):
         }
 
     def __post_init__(self):
-        if self.mode not in self.supported_modes:
+        try:
+            self.mode = ChunkingMode(self.mode)
+            self.params = ChunkerParams(**self.params)
+
+        except ValueError:
             raise ValueError(
                 f"Mode '{self.mode}' is not supported by {self.__class__.__name__}. "
                 f"Supported modes: {[m.value for m in self.supported_modes]}."
