@@ -1,23 +1,23 @@
 from chonkie import TokenChunker, SentenceChunker, SemanticChunker, Chunk
 from dataclasses import dataclass
 from src.core.text.chunk.base import BaseTextChunker
-from src.core.text.chunk.models import ChunkingMode, TextChunk, ChunkerParams
+from src.core.text.chunk.models import ChunkingMode, TextChunk
 from src.core.text.chunk.wrapper import ChonkieEmbeddingWrapper
+from src.core.text.chunk.registry import register_chunker
 from typing import ClassVar
 
+@register_chunker("chonkie")
 @dataclass 
 class ChonkieChunker(BaseTextChunker):
     """
     Class for text chunking with chonkie library. 
     """
 
-    mode: ChunkingMode
     supported_modes: ClassVar[set[ChunkingMode]] = {
         ChunkingMode.TOKEN,
         ChunkingMode.SENTENCE, 
         ChunkingMode.SEMANTIC
         }
-    params: ChunkerParams
     
     def get_chunks(self, text: str, doc_name: str | None = None) -> list[TextChunk]:
         dispatcher = {
@@ -25,9 +25,6 @@ class ChonkieChunker(BaseTextChunker):
             ChunkingMode.SENTENCE: self._chunk_by_sentence,
             ChunkingMode.SEMANTIC: self._chunk_by_semantic,
         }
-        
-        if self.mode not in dispatcher:
-            raise ValueError(f"Unsupported mode: {self.mode}")
         
         chunk_func = dispatcher[self.mode]
         return chunk_func(text, doc_name)
