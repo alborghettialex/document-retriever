@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from src.core.embeddings.models import TextEmbedding
 from src.core.text.chunk.models import TextChunk
+from src.core.embeddings.config_schema import EmbedderParams
 
 @dataclass
 class BaseTextEmbeddingsGenerator(ABC):
@@ -9,7 +10,10 @@ class BaseTextEmbeddingsGenerator(ABC):
     Abstract base class for embedding generation.
     """
 
-    model_name: str 
+    params: dict
+
+    def __post_init__(self):
+        self.params = EmbedderParams(**self.params)
 
     def get_embedding(self, text: str, return_numpy: bool) -> TextEmbedding:
         """
@@ -31,7 +35,7 @@ class BaseTextEmbeddingsGenerator(ABC):
         Generate embeddings for a batch of texts.
 
         Args:
-            chunks (list[TextChunk]): List of text chunks to be embedded.
+            chunks (list[str]): List of text to be embedded.
             batch_size (int): Number of texts to process in each batch.
             return_numpy (bool): If True, embeddings are returned as numpy arrays; 
                                 otherwise, as standard Python lists.
@@ -40,3 +44,7 @@ class BaseTextEmbeddingsGenerator(ABC):
             list[TextEmbedding]: A list of embeddings corresponding to the input texts.
         """
         ...
+
+    def get_embeddings_from_chunks(self, chunks: list[TextChunk], return_numpy: bool, batch_size: int) -> list[TextEmbedding]:
+        texts = [chunk.text for chunk in chunks]
+        return self.get_embeddings(texts, return_numpy=return_numpy, batch_size=batch_size)
