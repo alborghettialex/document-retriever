@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from src.core.text.chunk.models import TextChunk, ChunkingMode
-from core.text.chunk.config_schema import ChunkerParams
+from src.core.text.chunk.config_schema import ChunkerParams
 from typing import ClassVar
 
 @dataclass
