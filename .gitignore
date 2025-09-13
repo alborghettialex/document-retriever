@@ -12,3 +12,6 @@ __pycache__/
 *.log
 *.tmp
 *.bak
+
+# backend storage
+uploaded/
