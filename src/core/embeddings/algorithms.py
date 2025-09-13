@@ -13,29 +13,29 @@ class HFDenseTextEmbeddingsGenerator(BaseTextEmbeddingsGenerator):
     """
     Embeddings generation ONNX with HuggingFace models.
     """ 
-    model_name: str
-    dim: int # dimensionality of the embedding space
 
     def __post_init__(self):
-        supported_models = [supported['model'] for supported in DenseTextEmbedding.list_supported_models()]
+        super().__post_init__()
 
-        if self.model_name not in supported_models:
+        supported_models = [supported['model'] for supported in DenseTextEmbedding.list_supported_models()]
+        
+        if self.params.model_name not in supported_models:
             DenseTextEmbedding.add_custom_model(
-                model=self.model_name,
+                model=self.params.model_name,
                 pooling=PoolingType.MEAN,
                 normalization=True,
-                sources=ModelSource(hf=self.model_name),  # can be used with an `url` to load files from a private storage
-                dim=self.dim,
+                sources=ModelSource(hf=self.params.model_name),  # can be used with an `url` to load files from a private storage
+                dim=self.params.dim,
                 model_file="onnx/model.onnx",  # can be used to load an already supported model with another optimization or quantization, e.g. onnx/model_O4.onnx
             )
 
-        self.model = DenseTextEmbedding(model_name=self.model_name)
+        self.model = DenseTextEmbedding(model_name=self.params.model_name)
 
-    def get_embeddings(self, chunks: list[TextChunk], return_numpy: bool, batch_size: int) -> list[TextEmbedding]:
-        texts = [chunk.text for chunk in chunks]
+    def get_embeddings(self, texts: list[str], return_numpy: bool, batch_size: int) -> list[TextEmbedding]:
         vectors = list(self.model.embed(texts, batch_size=batch_size))
 
         if return_numpy:
             return [TextEmbedding(text, vector) for text, vector in zip(texts, vectors)]
         else: 
             return [TextEmbedding(text, vector.tolist()) for text, vector in zip(texts, vectors)]
+        
